@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Expense Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Personalized Expense Tracker</h1>
+
+    <!-- Budget Section -->
+    <div class="budget-section">
+      <h2>Set Your Budget</h2>
+      <input type="number" id="budgetInput" placeholder="Enter budget amount" />
+      <button onclick="setBudget()">Set Budget</button>
+      <p id="budgetStatus">Budget: <span id="budgetAmount">0</span></p>
+      <p>Total Spent: <span id="totalSpent">0</span></p>
+      <p>Remaining Budget: <span id="remainingBudget">0</span></p>
+    </div>
+
+    <!-- Add Expense Section -->
+    <div class="expense-section">
+      <h2>Add Expense</h2>
+      <input type="number" id="expenseAmount" placeholder="Amount" />
+      <input type="text" id="expenseDate" placeholder="Date (YYYY-MM-DD)" />
+      <input type="text" id="expenseCategory" placeholder="Category" />
+      <button onclick="addExpense()">Add Expense</button>
+    </div>
+
+    <!-- Expense List -->
+    <div class="expense-list">
+      <h2>Expense List</h2>
+      <ul id="expenseList"></ul>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="chart-section">
+      <h2>Category-wise Spending</h2>
+      <canvas id="expenseChart" width="400" height="400"></canvas>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
