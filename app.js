@@ -1,115 +1,101 @@
+// Expense class
+class Expense {
+  constructor(amount, category, date) {
+    this.amount = amount;
+    this.category = category;
+    this.date = new Date(date); // Date object for filtering
+  }
+}
+
+// User class
 class User {
-    constructor(name, budget) {
-      this.name = name;
-      this.budget = budget;
-      this.expenses = [];
-    }
-  
-    addExpense(expense) {
-      this.expenses.push(expense);
-    }
-  
-    deleteExpense(expenseId) {
-      this.expenses = this.expenses.filter(exp => exp.id !== expenseId);
-    }
-  
-    analyzeExpenses() {
-      let totalSpent = 0;
-      const categorySpending = {};
-  
-      this.expenses.forEach(exp => {
-        totalSpent += exp.amount;
-        categorySpending[exp.category] = (categorySpending[exp.category] || 0) + exp.amount;
-      });
-  
-      const remainingBudget = this.budget - totalSpent;
-  
-      return { totalSpent, remainingBudget, categorySpending };
-    }
+  constructor(name, income) {
+    this.name = name;
+    this.income = income;
+    this.expenses = []; // Array to track all expenses
+    this.categories = {}; // Hash map to categorize expenses
   }
-  
-  class Expense {
-    static idCounter = 1;
-  
-    constructor(amount, date, category) {
-      this.id = Expense.idCounter++;
-      this.amount = amount;
-      this.date = date;
-      this.category = category;
+
+  // Add an expense
+  addExpense(amount, category, date) {
+    const expense = new Expense(amount, category, date);
+    this.expenses.push(expense);
+
+    // Update category-wise total
+    if (this.categories[category]) {
+      this.categories[category] += amount;
+    } else {
+      this.categories[category] = amount;
     }
+
+    console.log(`Expense added: ${amount} in category ${category}`);
   }
-  
-  // Initialize User
-  let user = new User("Alice", 0);
-  
-  // Update Budget
-  function setBudget() {
-    const budgetInput = document.getElementById("budgetInput").value;
-    user.budget = parseFloat(budgetInput);
-    updateUI();
+
+  // Analyze expenses
+  analyzeExpenses() {
+    const totalSpent = this.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const savings = this.income - totalSpent;
+
+    return {
+      totalSpent,
+      savings,
+      categoryBreakdown: this.categories,
+    };
   }
-  
-  // Add Expense
-  function addExpense() {
-    const amount = parseFloat(document.getElementById("expenseAmount").value);
-    const date = document.getElementById("expenseDate").value;
-    const category = document.getElementById("expenseCategory").value;
-  
-    if (amount && date && category) {
-      const expense = new Expense(amount, date, category);
-      user.addExpense(expense);
-      updateUI();
+
+  // Filter expenses by month
+  filterByMonth(month, year) {
+    return this.expenses.filter(
+      (expense) =>
+        expense.date.getMonth() + 1 === month && expense.date.getFullYear() === year
+    );
+  }
+
+  // Filter expenses by category
+  filterByCategory(category) {
+    return this.expenses.filter((expense) => expense.category === category);
+  }
+}
+
+// Budget class
+class Budget {
+  constructor(limit) {
+    this.limit = limit;
+  }
+
+  // Check if the budget is exceeded
+  checkBudget(totalSpent) {
+    if (totalSpent > this.limit) {
+      console.warn("Budget exceeded!");
+      return false;
     }
+    return true;
   }
-  
-  // Update UI
-  function updateUI() {
-    // Update Budget Status
-    const { totalSpent, remainingBudget, categorySpending } = user.analyzeExpenses();
-    document.getElementById("budgetAmount").innerText = user.budget;
-    document.getElementById("totalSpent").innerText = totalSpent;
-    document.getElementById("remainingBudget").innerText = remainingBudget;
-  
-    // Update Expense List
-    const expenseList = document.getElementById("expenseList");
-    expenseList.innerHTML = "";
-    user.expenses.forEach(exp => {
-      const li = document.createElement("li");
-      li.textContent = `${exp.date} - ${exp.category}: $${exp.amount}`;
-      expenseList.appendChild(li);
-    });
-  
-    // Update Chart
-    updateChart(categorySpending);
-  }
-  
-  // Update Chart
-  function updateChart(data) {
-    const ctx = document.getElementById("expenseChart").getContext("2d");
-  
-    const labels = Object.keys(data);
-    const values = Object.values(data);
-  
-    new Chart(ctx, {
-      type: "pie",
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            data: values,
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.6)",
-              "rgba(54, 162, 235, 0.6)",
-              "rgba(255, 206, 86, 0.6)",
-              "rgba(75, 192, 192, 0.6)",
-              "rgba(153, 102, 255, 0.6)",
-            ],
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-      },
-    });
-  }
-  
+}
+
+// Example Usage
+const user = new User("Alice", 5000); // User with $5000 monthly income
+const budget = new Budget(4000); // Set a budget of $4000
+
+// Add expenses
+user.addExpense(500, "Food", "2025-01-01");
+user.addExpense(1200, "Rent", "2025-01-02");
+user.addExpense(300, "Entertainment", "2025-01-03");
+user.addExpense(800, "Utilities", "2025-01-05");
+
+// Analyze expenses
+const { totalSpent, savings, categoryBreakdown } = user.analyzeExpenses();
+console.log("Total Spent:", totalSpent);
+console.log("Savings:", savings);
+console.log("Category Breakdown:", categoryBreakdown);
+
+// Check budget
+budget.checkBudget(totalSpent);
+
+// Filter expenses by month
+const januaryExpenses = user.filterByMonth(1, 2025);
+console.log("Expenses in January 2025:", januaryExpenses);
+
+// Filter expenses by category
+const foodExpenses = user.filterByCategory("Food");
+console.log("Food Expenses:", foodExpenses);
