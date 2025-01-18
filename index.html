@@ -3,40 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Personal Finance Manager</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Personalized Expense Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>Personal Finance Manager</h1>
+    <h1>Personalized Expense Tracker</h1>
+    <nav>
+        <a href="#overview">Overview</a>
+        <a href="#expense">Expenses</a>
+    </nav>
 
-    <!-- Set Budget and Income -->
-    <div class="section">
-      <h2>Set Income and Budget</h2>
-      <input type="number" id="incomeInput" placeholder="Enter monthly income" />
-      <input type="number" id="budgetInput" placeholder="Set budget limit" />
-      <button onclick="initialize()">Set</button>
+    <div class="container" id="overview">
+        <h1>Dashboard</h1>
+        <canvas id="overviewChart" width="400" height="200"></canvas>
+        <canvas id="totalIncomeSavingsChart" width="400" height="200"></canvas>
+        <div class="summary">
+            <h2>Summary</h2>
+            <label for="month">Select a Month:</label>
+            <select name="month" id="month">
+                <option value="Jan-2025">January</option>
+                <option value="Feb-2025">February</option>
+                <option value="Mar-2025">March</option>
+                <option value="Apr-2025">April</option>
+                <option value="May-2025">May</option>
+                <option value="Jun-2025">June</option>
+                <option value="Jul-2025">July</option>
+                <option value="Aug-2025">August</option>
+                <option value="Sep-2025">September</option>
+                <option value="Oct-2025">October</option>
+                <option value="Nov-2025">November</option>
+                <option value="Dec-2025">December</option>
+            </select>
+            <p>Income: <span id="incomeAmount">$0</span></p>
+            <p>Budget: <span id="budgetAmount">$0</span></p>
+            <p>Expense: <span id="expenseAmount">$0</span></p>
+            <p>Savings: <span id="savingsAmount">$0</span></p>
+        </div>
     </div>
 
-    <!-- Add Expense -->
-    <div class="section">
-      <h2>Add Expense</h2>
-      <input type="number" id="amountInput" placeholder="Expense Amount" />
-      <input type="text" id="categoryInput" placeholder="Category (e.g., Food)" />
-      <input type="date" id="dateInput" />
-      <button onclick="addNewExpense()">Add Expense</button>
+    <div class="container" id="expense">
+        <h1>Expenses</h1>
+        <div class="income">
+            <label for="incomeInput">Enter your income:</label>
+            <input type="number" id="incomeInput" placeholder="Enter Income amount">
+            <button onclick="setIncome()">Submit</button>
+        </div>
+        <div class="budget">
+            <label for="budgetInput">Enter your Budget:</label>
+            <input type="number" id="budgetInput" placeholder="Enter Budget amount">
+            <button onclick="setBudget()">Submit</button>
+        </div>
+        <div class="expense-section">
+            <h2>Add Expense</h2>
+            <label for="expenseCategory">Category:</label>
+            <select id="expenseCategory">
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
+            <label for="expenseAmount1">Amount:</label>
+            <input type="number" id="expenseAmount1" placeholder="Enter the amount">
+            <label for="expenseDate">Date:</label>
+            <input type="date" id="expenseDate">
+            <button onclick="addExpense()">Add Expense</button>
+        </div>
     </div>
 
-    <!-- Display Summary -->
-    <div class="section">
-      <h2>Summary</h2>
-      <p>Total Spent: <span id="totalSpent">0</span></p>
-      <p>Savings: <span id="savings">0</span></p>
-      <p>Category Breakdown:</p>
-      <ul id="categoryBreakdown"></ul>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

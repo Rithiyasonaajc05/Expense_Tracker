@@ -1,101 +1,200 @@
-// Expense class
-class Expense {
-  constructor(amount, category, date) {
-    this.amount = amount;
-    this.category = category;
-    this.date = new Date(date); // Date object for filtering
+//ExpenseTracker
+class ExpenseTracker {
+  constructor() {
+      this.income = new Map(); // Map to store income per month
+      this.budget = new Map(); // Map to store budget per month
+      this.expenses = []; // Stores all expenses
+      this.monthlyExpenses = new Map(); // Stores monthly expense data
   }
-}
 
-// User class
-class User {
-  constructor(name, income) {
-    this.name = name;
-    this.income = income;
-    this.expenses = []; // Array to track all expenses
-    this.categories = {}; // Hash map to categorize expenses
+  // Set income for a specific month
+  setIncome(amount) {
+      const selectedMonth = document.getElementById('month').value;
+      this.income.set(selectedMonth, parseFloat(amount) || 0);
+      this.updateOverview();
+  }
+
+  // Set budget for a specific month
+  setBudget(amount) {
+      const selectedMonth = document.getElementById('month').value;
+      this.budget.set(selectedMonth, parseFloat(amount) || 0);
+      this.updateOverview();
   }
 
   // Add an expense
-  addExpense(amount, category, date) {
-    const expense = new Expense(amount, category, date);
-    this.expenses.push(expense);
+  addExpense(category, amount, date) {
+      if (!amount || !date) {
+          alert("Please enter a valid expense amount and date.");
+          return;
+      }
 
-    // Update category-wise total
-    if (this.categories[category]) {
-      this.categories[category] += amount;
-    } else {
-      this.categories[category] = amount;
-    }
+      const expense = { category, amount: parseFloat(amount), date: new Date(date) };
+      this.expenses.push(expense);
 
-    console.log(`Expense added: ${amount} in category ${category}`);
+      // Update monthly expenses map
+      const month = this.getMonthKey(expense.date);
+      if (!this.monthlyExpenses.has(month)) {
+          this.monthlyExpenses.set(month, []);
+      }
+      this.monthlyExpenses.get(month).push(expense);
+
+      alert(`Expense of $${amount} added under ${category} for ${month}.`);
+      this.updateOverview();
   }
 
-  // Analyze expenses
-  analyzeExpenses() {
-    const totalSpent = this.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-    const savings = this.income - totalSpent;
+  // Calculate total expenses for a given month
+  getMonthlyExpenses(month) {
+      if (!this.monthlyExpenses.has(month)) return 0;
+      return this.monthlyExpenses
+          .get(month)
+          .reduce((total, expense) => total + expense.amount, 0);
+  }
+  // Calculate total income and savings
+  // Calculate total income and savings
+  calculateTotals() {
+      let totalIncome = Array.from(this.income.values()).reduce((sum, value) => sum + value, 0); // Sum of all incomes
+      let totalExpenses = 0;
 
-    return {
-      totalSpent,
-      savings,
-      categoryBreakdown: this.categories,
-    };
+      this.monthlyExpenses.forEach((expenses) => {
+          totalExpenses += expenses.reduce((sum, expense) => sum + expense.amount, 0);
+      });
+
+      const totalSavings = totalIncome - totalExpenses;
+      return { totalIncome, totalSavings };
   }
 
-  // Filter expenses by month
-  filterByMonth(month, year) {
-    return this.expenses.filter(
-      (expense) =>
-        expense.date.getMonth() + 1 === month && expense.date.getFullYear() === year
-    );
+  updateTotalIncomeSavingsChart() {
+      const totals = this.calculateTotals(); // Get updated totals
+      const ctx = document.getElementById('totalIncomeSavingsChart').getContext('2d');
+  
+      const data = {
+          labels: ['Total Income', 'Total Savings'],
+          datasets: [{
+              label: 'Amount ($)',
+              data: [totals.totalIncome, totals.totalSavings], // Use calculated totals
+              backgroundColor: ['#36A2EB', '#8BC34A']
+          }]
+      };
+  
+      if (!this.totalChart) {
+          this.totalChart = new Chart(ctx, {
+              type: 'bar',
+              data: data,
+              options: {
+                  responsive: true,
+                  plugins: {
+                      legend: {
+                          display: false
+                      }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true
+                      }
+                  }
+              }
+          });
+      } else {
+          this.totalChart.data = data; // Update chart data
+          this.totalChart.update();
+      }
+  }
+  
+  
+
+
+  // Update the Overview Section
+  updateOverview() {
+      const selectedMonth = document.getElementById('month').value;
+
+      // Get income and budget for the selected month
+      const income = this.income.get(selectedMonth) || 0;
+      const budget = this.budget.get(selectedMonth) || 0;
+
+      // Get total expenses for the selected month
+      const totalExpense = this.getMonthlyExpenses(selectedMonth);
+
+      // Update the DOM
+      document.getElementById('incomeAmount').innerText = income.toFixed(2);
+      document.getElementById('budgetAmount').innerText = budget.toFixed(2);
+      document.getElementById('expenseAmount').innerText = totalExpense.toFixed(2);
+      document.getElementById('savingsAmount').innerText = (income - totalExpense).toFixed(2);
+
+      // Update the chart
+      this.updateChart(selectedMonth);
+      this.updateTotalIncomeSavingsChart();
   }
 
-  // Filter expenses by category
-  filterByCategory(category) {
-    return this.expenses.filter((expense) => expense.category === category);
+  // Generate a unique month key for Map (e.g., "Jan-2025")
+  getMonthKey(date) {
+      const monthNames = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      return `${monthNames[date.getMonth()]}-${date.getFullYear()}`;
+  }
+
+  // Update the Chart.js graph
+  updateChart(month) {
+      const categories = ['Food', 'Transport', 'Entertainment', 'Other'];
+      const categoryTotals = categories.map((category) =>
+          (this.monthlyExpenses.get(month) || [])
+              .filter((expense) => expense.category === category)
+              .reduce((total, expense) => total + expense.amount, 0)
+      );
+
+      if (!this.chart) {
+          const ctx = document.getElementById('overviewChart').getContext('2d');
+          this.chart = new Chart(ctx, {
+              type: 'pie',
+              data: {
+                  labels: categories,
+                  datasets: [{
+                      data: categoryTotals,
+                      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A'],
+                  }]
+              }
+          });
+      } else {
+          this.chart.data.datasets[0].data = categoryTotals;
+          this.chart.update();
+      }
   }
 }
 
-// Budget class
-class Budget {
-  constructor(limit) {
-    this.limit = limit;
-  }
 
-  // Check if the budget is exceeded
-  checkBudget(totalSpent) {
-    if (totalSpent > this.limit) {
-      console.warn("Budget exceeded!");
-      return false;
-    }
-    return true;
-  }
+// Initialize ExpenseTracker object
+const tracker = new ExpenseTracker();
+
+// Event Handlers
+function setIncome() {
+  const incomeInput = document.getElementById('incomeInput').value;
+  tracker.setIncome(incomeInput);
 }
 
-// Example Usage
-const user = new User("Alice", 5000); // User with $5000 monthly income
-const budget = new Budget(4000); // Set a budget of $4000
+function setBudget() {
+  const budgetInput = document.getElementById('budgetInput').value;
+  tracker.setBudget(budgetInput);
+}
 
-// Add expenses
-user.addExpense(500, "Food", "2025-01-01");
-user.addExpense(1200, "Rent", "2025-01-02");
-user.addExpense(300, "Entertainment", "2025-01-03");
-user.addExpense(800, "Utilities", "2025-01-05");
 
-// Analyze expenses
-const { totalSpent, savings, categoryBreakdown } = user.analyzeExpenses();
-console.log("Total Spent:", totalSpent);
-console.log("Savings:", savings);
-console.log("Category Breakdown:", categoryBreakdown);
+function addExpense() {
+  const category = document.getElementById('expenseCategory').value;
+  const amount = document.getElementById('expenseAmount1').value;
+  const date = document.getElementById('expenseDate').value;
 
-// Check budget
-budget.checkBudget(totalSpent);
+  if (!category || !amount || !date) {
+      alert("Please fill in all the fields before adding an expense.");
+      return;
+  }
 
-// Filter expenses by month
-const januaryExpenses = user.filterByMonth(1, 2025);
-console.log("Expenses in January 2025:", januaryExpenses);
+  tracker.addExpense(category, amount, date);
 
-// Filter expenses by category
-const foodExpenses = user.filterByCategory("Food");
-console.log("Food Expenses:", foodExpenses);
+  // Clear input fields after adding an expense
+  document.getElementById('expenseAmount1').value = '';
+  document.getElementById('expenseDate').value = '';
+}
+
+// Update overview when month changes
+document.getElementById('month').addEventListener('change', () => tracker.updateOverview());
+
