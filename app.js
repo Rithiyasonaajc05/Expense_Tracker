@@ -40,6 +40,7 @@ class ExpenseTracker {
 
       alert(`Expense of $${amount} added under ${category} for ${month}.`);
       this.updateOverview();
+      this.updateExpenseList();
   }
 
   // Calculate total expenses for a given month
@@ -99,7 +100,26 @@ class ExpenseTracker {
           this.totalChart.update();
       }
   }
+  // Update the list of expenses for the selected month
+  updateExpenseList() {
+      const selectedMonth = document.getElementById('month').value;
+      const expenseList = document.getElementById('expenseList');
+      expenseList.innerHTML = ''; // Clear the list
   
+      if (this.monthlyExpenses.has(selectedMonth)) {
+          const expenses = this.monthlyExpenses.get(selectedMonth);
+          expenses.forEach(expense => {
+              const li = document.createElement('li');
+              li.textContent = `${expense.date.toLocaleDateString()} - ${expense.category}: $${expense.amount.toFixed(2)}`;
+              expenseList.appendChild(li);
+          });
+      } else {
+          const li = document.createElement('li');
+          li.textContent = 'No expenses for this month.';
+          expenseList.appendChild(li);
+      }
+  }
+
   
 
 
@@ -123,6 +143,8 @@ class ExpenseTracker {
       // Update the chart
       this.updateChart(selectedMonth);
       this.updateTotalIncomeSavingsChart();
+
+       this.updateExpenseList();
   }
 
   // Generate a unique month key for Map (e.g., "Jan-2025")
