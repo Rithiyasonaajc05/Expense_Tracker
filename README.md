@@ -1,47 +1,47 @@
 
-Expense Tracker
+#Expense Tracker#
 
-Description
+###Description###
 
 The Expense Tracker is a web-based tool that allows users to manage their monthly income, budgets, and expenses efficiently. It provides an overview of financial status, including savings, and visualizes data through charts for better insights.
 
-Features
+###Features###
 
-Income and Budget Management:
+*Income and Budget Management:
 
-Set monthly income and budget.
+*Set monthly income and budget.
 
-Expense Tracking:
+*Expense Tracking:
 
-Categorize expenses into predefined categories (e.g., Food, Transport, Entertainment, Other).
+-Categorize expenses into predefined categories (e.g., Food, Transport, Entertainment, Other).
 
-Record amounts and dates for each expense.
+-Record amounts and dates for each expense.
 
-Overview:
+###Overview:###
 
-View total income, budget, expenses, and savings for each month.
+*View total income, budget, expenses, and savings for each month.
 
-Charts:
+###Charts:###
 
-Pie chart for expense categories.
+*Pie chart for expense categories.
 
-Bar chart for total income and savings.
+*Bar chart for total income and savings.
 
-Installation
+###Installation###
 
-Clone or download the repository.
+*Clone or download the repository.
 
-Open the index.html file in a modern web browser.
+*Open the index.html file in a modern web browser.
 
-Usage
+###Usage###
 
-Set Income and Budget:
+*Set Income and Budget:
 
-Select a month.
+*Select a month.
 
-Enter the income and budget amounts, then click the respective buttons to save.
+*Enter the income and budget amounts, then click the respective buttons to save.
 
-Add Expenses:
+###Add Expenses:###
 
 Select a category, input the expense amount and date, and click "Add Expense."
 
