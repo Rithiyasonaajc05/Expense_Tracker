@@ -1,38 +1,38 @@
 # Expense Tracker #
 
-#### Description ####
+### Description ###
 
 The Expense Tracker is a web-based tool that allows users to manage their monthly income, budgets, and expenses efficiently. It provides an overview of financial status, including savings, and visualizes data through charts for better insights.
 
-#### Features ####
+### Features ###
 
-###### Income and Budget Management: #####
+##### Income and Budget Management: #####
 
 * Set monthly income and budget.
 
-###### Expense Tracking: ######
+##### Expense Tracking: #####
 
 * Categorize expenses into predefined categories (e.g., Food, Transport, Entertainment, Other).
 
 * Record amounts and dates for each expense.
 
-###### Overview: ######
+##### Overview: #####
 
 * View total income, budget, expenses, and savings for each month.
 
-###### Charts: ######
+##### Charts: #####
 
 * Pie chart for expense categories.
 
 * Bar chart for total income and savings.
 
-###### Installation ######
+### Installation ###
 
 1. Clone or download the repository.
 
 2. Open the index.html file in a modern web browser.
 
-#### Usage ####
+### Usage ###
 
 ##### Set Income and Budget: #####
 
@@ -48,10 +48,10 @@ The Expense Tracker is a web-based tool that allows users to manage their monthl
 
 * Select a month to see income, expenses, budget, savings, and charts.
 
-##### Dependencies #####
+### Dependencies ###
 
 * Chart.js: Used for creating visualizations like pie and bar charts. (Chart.js Documentation)
 
-##### License #####
+### License ###
 
 * This project is licensed under the MIT License.
