@@ -1,11 +1,11 @@
 
-#Expense Tracker#
+#Expense Tracker
 
-###Description###
+##Description
 
 The Expense Tracker is a web-based tool that allows users to manage their monthly income, budgets, and expenses efficiently. It provides an overview of financial status, including savings, and visualizes data through charts for better insights.
 
-###Features###
+##Features
 
 *Income and Budget Management:
 
